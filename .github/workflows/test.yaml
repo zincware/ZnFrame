@@ -25,7 +25,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v4
       - name: Install Poetry
         run: |
           pipx install poetry
