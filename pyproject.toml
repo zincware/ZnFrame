@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "znframe"
+version = "0.1.0"
+description = "ZnFrame - ASE-like Interface based on dataclasses"
+authors = ["zincwarecode <zincwarecode@gmail.com>"]
+readme = "README.md"
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+attrs = "^23.1.0"
+ase = "^3.22.1"
+numpy = "^1.26.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.8"
+pytest = "^7.4.3"
+ipykernel = "^6.27.1"
+coverage = "^7.3.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
