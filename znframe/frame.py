@@ -99,9 +99,6 @@ class Frame:
             cell=self.cell,
         )
 
-        self.arrays.pop("colors")
-        self.arrays.pop("radii")
-
         atoms.arrays.update(self.arrays)
         atoms.info.update(self.info)
 
