@@ -2,8 +2,11 @@ from attrs import define, field, cmp_using
 import attrs
 import numpy as np
 import ase.cell
+from ase.data.colors import jmol_colors
 from copy import deepcopy
 import json
+
+from znframe.bonds import ASEComputeBonds
 
 
 def _cell_to_array(cell: np.ndarray | ase.cell.Cell) -> np.ndarray:
@@ -40,12 +43,39 @@ class Frame:
     positions: np.ndarray = field(
         converter=_list_to_array, eq=cmp_using(np.array_equal)
     )
-    arrays: dict[str, np.ndarray] = field(converter=_list_to_array, eq=False)
-    info: dict[str, float | int | np.ndarray] = field(
-        converter=_list_to_array, eq=False
+
+    connectivity: np.ndarray = field(
+        converter=_list_to_array, eq=cmp_using(np.array_equal), default=None
     )
-    pbc: np.ndarray = field(converter=_list_to_array, eq=cmp_using(np.array_equal))
-    cell: np.ndarray = field(converter=_cell_to_array, eq=cmp_using(np.array_equal))
+
+    arrays: dict[str, np.ndarray] = field(
+        converter=_list_to_array, eq=False, factory=dict
+    )
+    info: dict[str, float | int | np.ndarray] = field(
+        converter=_list_to_array, eq=False, factory=dict
+    )
+
+    pbc: np.ndarray = field(
+        converter=_list_to_array,
+        eq=cmp_using(np.array_equal),
+        default=np.array([True, True, True]),
+    )
+    cell: np.ndarray = field(
+        converter=_cell_to_array, eq=cmp_using(np.array_equal), default=np.zeros(3)
+    )
+
+    def __attrs_post_init__(self):
+        if self.connectivity is None:
+            ase_bond_calculator = ASEComputeBonds()
+            self.connectivity = ase_bond_calculator.build_graph(self.to_atoms())
+            self.connectivity = ase_bond_calculator.get_bonds(self.connectivity)
+
+        if "colors" not in self.arrays:
+            self.arrays["colors"] = [
+                rgb2hex(jmol_colors[number]) for number in self.numbers
+            ]
+        if "radii" not in self.arrays:
+            self.arrays["radii"] = [get_radius(number) for number in self.numbers]
 
     @classmethod
     def from_atoms(cls, atoms: ase.Atoms):
@@ -89,3 +119,12 @@ class Frame:
     @classmethod
     def from_json(cls, s: str):
         return cls.from_dict(json.loads(s))
+
+
+def rgb2hex(value):
+    r, g, b = np.array(value * 255, dtype=int)
+    return "#%02x%02x%02x" % (r, g, b)
+
+
+def get_radius(value):
+    return (0.25 * (2 - np.exp(-0.2 * value)),)
