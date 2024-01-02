@@ -39,16 +39,24 @@ def _ndarray_to_list(array: dict | np.ndarray) -> dict | list:
 
 @define
 class Frame:
-    numbers: np.ndarray = field(converter=_list_to_array, eq=cmp_using(np.array_equal))
+    numbers: np.ndarray = field(
+        converter=_list_to_array, eq=cmp_using(np.array_equal)
+        )
     positions: np.ndarray = field(
         converter=_list_to_array, eq=cmp_using(np.array_equal)
         )
+
+    connectivity: np.ndarray = field(
+        converter=_list_to_array, eq=cmp_using(np.array_equal), factory=None
+        )
+
     arrays: dict[str, np.ndarray] = field(
         converter=_list_to_array, eq=False, factory=dict
         )
     info: dict[str, float | int | np.ndarray] = field(
         converter=_list_to_array, eq=False, factory=dict
         )
+
     pbc: np.ndarray = field(
         converter=_list_to_array, eq=cmp_using(np.array_equal), factory=list
         )
@@ -56,9 +64,7 @@ class Frame:
         converter=_cell_to_array, eq=cmp_using(np.array_equal), factory=list
         )
 
-    connectivity: np.ndarray = field(
-        converter=_list_to_array, eq=cmp_using(np.array_equal), factory=None
-        )
+
 
 
     def __attrs_post_init__(self):
