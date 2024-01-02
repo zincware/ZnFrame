@@ -1,0 +1,25 @@
+{
+  "name": "znframe",
+  "version": "0.1.1",
+  "description": "ZnFrame - ASE-like Interface for atomistic structures",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zincware/ZnFrame.git"
+  },
+  "author": "Fabian Zills",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/zincware/ZnFrame/issues"
+  },
+  "homepage": "https://github.com/zincware/ZnFrame#readme",
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  }
+}

@@ -21,3 +21,6 @@ coverage = "^7.3.3"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.codespell]
+skip = "poetry.lock,examples/*"
