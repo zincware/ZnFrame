@@ -38,3 +38,5 @@ class Frame {
     };
   }
 }
+
+export default { Frame, Atom };
