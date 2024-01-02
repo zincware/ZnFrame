@@ -82,6 +82,9 @@ class Frame:
         arrays = deepcopy(atoms.arrays)
         info = deepcopy(atoms.info)
 
+        arrays.pop("colors")
+        arrays.pop("radii")
+
         return cls(
             numbers=arrays.pop("numbers"),
             positions=arrays.pop("positions"),
