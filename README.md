@@ -4,8 +4,9 @@
 
 # ZnFrame - ASE-like Interface based on dataclasses
 
-This package is designed for light-weight applications that require a structure for managing atomic structures.
-It's primary focus lies on the conversion to / from JSON, to send data around easily.
+This package is designed for light-weight applications that require a structure
+for managing atomic structures. It's primary focus lies on the conversion to /
+from JSON, to send data around easily.
 
 ```python
 from znframe import Frame

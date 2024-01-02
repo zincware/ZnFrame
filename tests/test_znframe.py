@@ -3,9 +3,11 @@ from znframe import Frame
 import pytest
 import numpy as np
 
+
 @pytest.fixture
 def water() -> Frame:
     return Frame.from_atoms(molecule("H2O"))
+
 
 @pytest.fixture
 def ammonia() -> Frame:
@@ -14,7 +16,6 @@ def ammonia() -> Frame:
     ammonia.arrays["forces"] = np.random.random((4, 3))
     ammonia.info["energy"] = -1234
     return Frame.from_atoms(ammonia)
-
 
 
 def test_frame_from_ase_molecule(ammonia):
