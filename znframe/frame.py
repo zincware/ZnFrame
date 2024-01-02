@@ -60,7 +60,7 @@ class Frame:
         
         if not isinstance(self.connectivity, list):
             ase_bond_calculator = ASEComputeBonds()
-            if self.connectivity.number_of_nodes() == 0 and not :
+            if self.connectivity.number_of_nodes() == 0:
                 self.connectivity = ase_bond_calculator.build_graph(self.to_atoms())
             self.connectivity = ase_bond_calculator.get_bonds(self.connectivity)
 
