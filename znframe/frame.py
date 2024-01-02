@@ -9,7 +9,6 @@ import networkx as nx
 
 from znframe.bonds import ASEComputeBonds
 
-
 def _cell_to_array(cell: np.ndarray | ase.cell.Cell) -> np.ndarray:
     if isinstance(cell, np.ndarray):
         return cell
@@ -51,15 +50,15 @@ class Frame:
     pbc: np.ndarray = field(converter=_list_to_array, eq=cmp_using(np.array_equal))
     cell: np.ndarray = field(converter=_cell_to_array, eq=cmp_using(np.array_equal))
 
-    connectivity: nx.Graph = field(default=Factory(nx.empty_graph()))
+    connectivity: nx.Graph = nx.empty_graph() #this should be replaced with field but field(default=Factory(nx.empty_graph())) does not work
 
     def __attrs_post_init__(self):
         
         if self.connectivity == nx.empty_graph():
             ase_bond_calculator = ASEComputeBonds()
-            ase_bond_calculator = ase_bond_calculator.build_graph(self.to_atoms())
-        
-        self.connectivity = self.get_bonds()
+            self.connectivity = ase_bond_calculator.build_graph(self.to_atoms())
+
+        self.connectivity = ase_bond_calculator.get_bonds(self.connectivity)
 
         if "colors" not in self.arrays:
             self.arrays["colors"] = [

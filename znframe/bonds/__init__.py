@@ -47,8 +47,7 @@ class ASEComputeBonds(BaseModel):
         except NetworkXError:
             pass
 
-    def get_bonds(self, atoms: ase.Atoms):
-        graph = atoms.connectivity
+    def get_bonds(self, graph):
         bonds = []
         for edge in graph.edges:
             bonds.append((edge[0], edge[1], graph.edges[edge]["weight"]))
