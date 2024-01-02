@@ -82,9 +82,6 @@ class Frame:
         arrays = deepcopy(atoms.arrays)
         info = deepcopy(atoms.info)
 
-        arrays.pop("colors")
-        arrays.pop("radii")
-
         return cls(
             numbers=arrays.pop("numbers"),
             positions=arrays.pop("positions"),
@@ -101,6 +98,9 @@ class Frame:
             pbc=self.pbc,
             cell=self.cell,
         )
+
+        self.arrays.pop("colors")
+        self.arrays.pop("radii")
 
         atoms.arrays.update(self.arrays)
         atoms.info.update(self.info)
