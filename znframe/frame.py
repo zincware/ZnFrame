@@ -7,7 +7,7 @@ from copy import deepcopy
 import json
 import networkx as nx
 
-from bonds import ASEComputeBonds
+from znframe.bonds import ASEComputeBonds
 
 
 def _cell_to_array(cell: np.ndarray | ase.cell.Cell) -> np.ndarray:
