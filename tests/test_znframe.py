@@ -41,6 +41,7 @@ def test_frame_to_dict(water):
     assert water.to_dict() == {
         "numbers": water.numbers,
         "positions": water.positions,
+        "connectivity": water.connectivity,
         "arrays": water.arrays,
         "info": water.info,
         "pbc": water.pbc,
