@@ -42,35 +42,39 @@ class Frame:
     numbers: np.ndarray = field(converter=_list_to_array, eq=cmp_using(np.array_equal))
     positions: np.ndarray = field(
         converter=_list_to_array, eq=cmp_using(np.array_equal)
-    )
-    arrays: dict[str, np.ndarray] = field(converter=_list_to_array, eq=False)
+        )
+    arrays: dict[str, np.ndarray] = field(
+        converter=_list_to_array, eq=False, factory=dict
+        )
     info: dict[str, float | int | np.ndarray] = field(
-        converter=_list_to_array, eq=False
-    )
-    pbc: np.ndarray = field(converter=_list_to_array, eq=cmp_using(np.array_equal))
-    cell: np.ndarray = field(converter=_cell_to_array, eq=cmp_using(np.array_equal))
+        converter=_list_to_array, eq=False, factory=dict
+        )
+    pbc: np.ndarray = field(
+        converter=_list_to_array, eq=cmp_using(np.array_equal), factory=list
+        )
+    cell: np.ndarray = field(
+        converter=_cell_to_array, eq=cmp_using(np.array_equal), factory=list
+        )
 
-    connectivity: nx.Graph = nx.empty_graph() 
-    # this should be replaced with field.
-    # Furthermore if you use from_json, you get a list instead of a graph. 
-    # this should also be possible as it is not very effficient to convert the list to a graph
-    # and then back to a list.
+    connectivity: np.ndarray = field(
+        converter=_list_to_array, eq=cmp_using(np.array_equal), factory=None
+        )
+
 
     def __attrs_post_init__(self):
         
-        if not isinstance(self.connectivity, list):
+        if self.connectivity is None:
             ase_bond_calculator = ASEComputeBonds()
-            if self.connectivity.number_of_nodes() == 0:
-                self.connectivity = ase_bond_calculator.build_graph(self.to_atoms())
+            self.connectivity = ase_bond_calculator.build_graph(self.to_atoms())
             self.connectivity = ase_bond_calculator.get_bonds(self.connectivity)
 
         if "colors" not in self.arrays:
             self.arrays["colors"] = [
-                self.rgb2hex(jmol_colors[number]) for number in self.numbers
+                rgb2hex(jmol_colors[number]) for number in self.numbers
                 ]
         if "radii" not in self.arrays:
             self.arrays["radii"] = [
-                self.get_radius(number) for number in self.numbers
+                get_radius(number) for number in self.numbers
             ]
 
     @classmethod
@@ -116,10 +120,11 @@ class Frame:
     def from_json(cls, s: str):
         return cls.from_dict(json.loads(s))
 
-    def rgb2hex(self, value):
-        r, g, b = np.array(value * 255, dtype=int)
-        return "#%02x%02x%02x" % (r, g, b)
-    
-    def get_radius(self, value):
-        return (0.25 * (2 - np.exp(-0.2 * value)),)
-    
+
+def rgb2hex(value):
+    r, g, b = np.array(value * 255, dtype=int)
+    return "#%02x%02x%02x" % (r, g, b)
+
+def get_radius(value):
+    return (0.25 * (2 - np.exp(-0.2 * value)),)
+
