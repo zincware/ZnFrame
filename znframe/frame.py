@@ -47,7 +47,7 @@ class Frame:
         )
 
     connectivity: np.ndarray = field(
-        converter=_list_to_array, eq=cmp_using(np.array_equal), factory=None
+        converter=_list_to_array, eq=cmp_using(np.array_equal), default=None
         )
 
     arrays: dict[str, np.ndarray] = field(
@@ -58,14 +58,11 @@ class Frame:
         )
 
     pbc: np.ndarray = field(
-        converter=_list_to_array, eq=cmp_using(np.array_equal), factory=list
+        converter=_list_to_array, eq=cmp_using(np.array_equal), default=np.array([True, True, True])
         )
     cell: np.ndarray = field(
-        converter=_cell_to_array, eq=cmp_using(np.array_equal), factory=list
+        converter=_cell_to_array, eq=cmp_using(np.array_equal), default=np.zeros(3)
         )
-
-
-
 
     def __attrs_post_init__(self):
         
