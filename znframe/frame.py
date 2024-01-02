@@ -50,15 +50,19 @@ class Frame:
     pbc: np.ndarray = field(converter=_list_to_array, eq=cmp_using(np.array_equal))
     cell: np.ndarray = field(converter=_cell_to_array, eq=cmp_using(np.array_equal))
 
-    connectivity: nx.Graph = nx.empty_graph() #this should be replaced with field but field(default=Factory(nx.empty_graph())) does not work
+    connectivity: nx.Graph = nx.empty_graph() 
+    # this should be replaced with field.
+    # Furthermore if you use from_json, you get a list instead of a graph. 
+    # this should also be possible as it is not very effficient to convert the list to a graph
+    # and then back to a list.
 
     def __attrs_post_init__(self):
         
-        if self.connectivity == nx.empty_graph():
+        if not isinstance(self.connectivity, list):
             ase_bond_calculator = ASEComputeBonds()
-            self.connectivity = ase_bond_calculator.build_graph(self.to_atoms())
-
-        self.connectivity = ase_bond_calculator.get_bonds(self.connectivity)
+            if self.connectivity.number_of_nodes() == 0 and not :
+                self.connectivity = ase_bond_calculator.build_graph(self.to_atoms())
+            self.connectivity = ase_bond_calculator.get_bonds(self.connectivity)
 
         if "colors" not in self.arrays:
             self.arrays["colors"] = [
@@ -112,10 +116,10 @@ class Frame:
     def from_json(cls, s: str):
         return cls.from_dict(json.loads(s))
 
-    def rgb2hex(value):
+    def rgb2hex(self, value):
         r, g, b = np.array(value * 255, dtype=int)
         return "#%02x%02x%02x" % (r, g, b)
     
-    def get_radius(value):
+    def get_radius(self, value):
         return (0.25 * (2 - np.exp(-0.2 * value)),)
     
