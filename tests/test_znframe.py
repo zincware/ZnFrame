@@ -21,7 +21,7 @@ def ammonia() -> Frame:
 def test_frame_from_ase_molecule(ammonia):
     assert ammonia.numbers.shape == (4,)
     assert ammonia.positions.shape == (4, 3)
-    assert set(ammonia.arrays) == {"momenta", "forces"}
+    assert set(ammonia.arrays) == {"momenta", "radii", "colors", "forces"}
     assert set(ammonia.info) == {"energy"}
     assert ammonia.pbc.shape == (3,)
     assert ammonia.cell.shape == (3, 3)
