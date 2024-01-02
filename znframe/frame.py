@@ -1,9 +1,13 @@
-from attrs import define, field, cmp_using
+from attrs import define, field, cmp_using, Factory
 import attrs
 import numpy as np
 import ase.cell
+from ase.data.colors import jmol_colors
 from copy import deepcopy
 import json
+import networkx as nx
+
+from bonds import ASEComputeBonds
 
 
 def _cell_to_array(cell: np.ndarray | ase.cell.Cell) -> np.ndarray:
@@ -47,6 +51,25 @@ class Frame:
     pbc: np.ndarray = field(converter=_list_to_array, eq=cmp_using(np.array_equal))
     cell: np.ndarray = field(converter=_cell_to_array, eq=cmp_using(np.array_equal))
 
+    connectivity: nx.Graph = field(default=Factory(nx.empty_graph()))
+
+    def __attrs_post_init__(self):
+        
+        if self.connectivity == nx.empty_graph():
+            ase_bond_calculator = ASEComputeBonds()
+            ase_bond_calculator = ase_bond_calculator.build_graph(self.to_atoms())
+        
+        self.connectivity = self.get_bonds()
+
+        if "colors" not in self.arrays:
+            self.arrays["colors"] = [
+                self.rgb2hex(jmol_colors[number]) for number in self.numbers
+                ]
+        if "radii" not in self.arrays:
+            self.arrays["radii"] = [
+                self.get_radius(number) for number in self.numbers
+            ]
+
     @classmethod
     def from_atoms(cls, atoms: ase.Atoms):
         arrays = deepcopy(atoms.arrays)
@@ -89,3 +112,11 @@ class Frame:
     @classmethod
     def from_json(cls, s: str):
         return cls.from_dict(json.loads(s))
+
+    def rgb2hex(value):
+        r, g, b = np.array(value * 255, dtype=int)
+        return "#%02x%02x%02x" % (r, g, b)
+    
+    def get_radius(value):
+        return (0.25 * (2 - np.exp(-0.2 * value)),)
+    
