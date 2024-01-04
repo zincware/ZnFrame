@@ -5,11 +5,12 @@ import ase.cell
 from ase.data.colors import jmol_colors
 from copy import deepcopy
 import json
+import typing as t
 
 from znframe.bonds import ASEComputeBonds
 
 
-def _cell_to_array(cell: np.ndarray | ase.cell.Cell) -> np.ndarray:
+def _cell_to_array(cell: t.Union[np.ndarray, ase.cell.Cell]) -> np.ndarray:
     if isinstance(cell, np.ndarray):
         return cell
     if isinstance(cell, list):
@@ -17,7 +18,7 @@ def _cell_to_array(cell: np.ndarray | ase.cell.Cell) -> np.ndarray:
     return cell.array
 
 
-def _list_to_array(array: dict | list) -> dict | np.ndarray:
+def _list_to_array(array: t.Union[dict, list]) -> t.Union[dict, np.ndarray]:
     if isinstance(array, list):
         return np.array(array)
     if isinstance(array, dict):
@@ -27,7 +28,7 @@ def _list_to_array(array: dict | list) -> dict | np.ndarray:
     return array
 
 
-def _ndarray_to_list(array: dict | np.ndarray) -> dict | list:
+def _ndarray_to_list(array: t.Union[dict, np.ndarray]) -> t.Union[dict, list]:
     if isinstance(array, np.ndarray):
         return array.tolist()
     if isinstance(array, dict):
@@ -51,7 +52,7 @@ class Frame:
     arrays: dict[str, np.ndarray] = field(
         converter=_list_to_array, eq=False, factory=dict
     )
-    info: dict[str, float | int | np.ndarray] = field(
+    info: dict[str, t.Union[float, int, np.ndarray]] = field(
         converter=_list_to_array, eq=False, factory=dict
     )
 
