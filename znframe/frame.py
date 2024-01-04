@@ -104,17 +104,19 @@ class Frame:
 
         return atoms
 
-    def to_dict(self) -> dict:
+    def to_dict(self, built_in_types: bool = True) -> dict:
         data = attrs.asdict(self)
-        data = _ndarray_to_list(data)
-        return data
-
+        if built_in_types:
+            return data
+        else:
+            return _ndarray_to_list(data)
+             
     @classmethod
     def from_dict(cls, d: dict):
         return cls(**d)
 
     def to_json(self) -> str:
-        data = self.to_dict()
+        data = self.to_dict(built_in_types=False)
         return json.dumps(data)
 
     @classmethod
