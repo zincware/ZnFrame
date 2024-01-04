@@ -110,7 +110,7 @@ class Frame:
             return data
         else:
             return _ndarray_to_list(data)
-             
+
     @classmethod
     def from_dict(cls, d: dict):
         return cls(**d)
