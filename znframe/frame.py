@@ -105,7 +105,9 @@ class Frame:
         return atoms
 
     def to_dict(self) -> dict:
-        return attrs.asdict(self)
+        data = attrs.asdict(self)
+        data = _ndarray_to_list(data)
+        return data
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -113,7 +115,6 @@ class Frame:
 
     def to_json(self) -> str:
         data = self.to_dict()
-        data = _ndarray_to_list(data)
         return json.dumps(data)
 
     @classmethod
