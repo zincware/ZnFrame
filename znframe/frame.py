@@ -96,7 +96,7 @@ class Frame:
             frame.connectivity = atoms.connectivity
         except AttributeError:
             pass
-        
+
         return frame
 
     def to_atoms(self) -> ase.Atoms:
