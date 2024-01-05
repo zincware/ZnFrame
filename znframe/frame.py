@@ -3,6 +3,7 @@ import attrs
 import numpy as np
 import ase.cell
 from ase.data.colors import jmol_colors
+from ase.calculators.singlepoint import SinglePointCalculator
 from copy import deepcopy
 import json
 import typing as t
@@ -91,6 +92,10 @@ class Frame:
             pbc=atoms.pbc,
             cell=atoms.cell,
         )
+        try:
+            frame.info["calc"] = atoms.calc.results
+        except AttributeError:
+            pass
 
         try:
             frame.connectivity = atoms.connectivity
@@ -106,6 +111,10 @@ class Frame:
             pbc=self.pbc,
             cell=self.cell,
         )
+
+        if "calc" in self.info:
+            atoms.calc = SinglePointCalculator(atoms)
+            atoms.calc.results = self.info.pop("calc", None)
 
         atoms.arrays.update(self.arrays)
         atoms.info.update(self.info)
