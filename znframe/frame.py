@@ -83,7 +83,7 @@ class Frame:
         arrays = deepcopy(atoms.arrays)
         info = deepcopy(atoms.info)
 
-        return cls(
+        frame = cls(
             numbers=arrays.pop("numbers"),
             positions=arrays.pop("positions"),
             arrays=arrays,
@@ -91,6 +91,13 @@ class Frame:
             pbc=atoms.pbc,
             cell=atoms.cell,
         )
+
+        try:
+            frame.connectivity = atoms.connectivity
+        except AttributeError:
+            pass
+
+        return frame
 
     def to_atoms(self) -> ase.Atoms:
         atoms = ase.Atoms(
@@ -102,6 +109,7 @@ class Frame:
 
         atoms.arrays.update(self.arrays)
         atoms.info.update(self.info)
+        atoms.connectivity = self.connectivity
 
         return atoms
 
