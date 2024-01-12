@@ -38,13 +38,14 @@ def _ndarray_to_list(array: t.Union[dict, np.ndarray]) -> t.Union[dict, list]:
         return array
     return array
 
+
 def _npnumber_to_number(number):
     if isinstance(number, np.floating):
         return float(number)
     if isinstance(number, np.integer):
         return int(number)
     return number
-    
+
 
 @define
 class Frame:
@@ -90,7 +91,7 @@ class Frame:
     def from_atoms(cls, atoms: ase.Atoms):
         arrays = deepcopy(atoms.arrays)
         info = deepcopy(atoms.info)
-        
+
         frame = cls(
             numbers=arrays.pop("numbers"),
             positions=arrays.pop("positions"),
@@ -99,7 +100,7 @@ class Frame:
             pbc=atoms.pbc,
             cell=atoms.cell,
         )
-        
+
         try:
             calc_data = {}
             for key, value in atoms.calc.results.items():
