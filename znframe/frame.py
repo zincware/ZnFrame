@@ -92,9 +92,10 @@ class Frame:
         arrays = deepcopy(atoms.arrays)
         info = deepcopy(atoms.info)
 
-        duplicates = list(set(atoms.calc.results.keys()) & set(atoms.arrays.keys()))
-        for key in duplicates:
-            arrays.pop(key)
+        if hasattr(atoms.calc, "results"):
+            duplicates = list(set(atoms.calc.results.keys()) & set(atoms.arrays.keys()))
+            for key in duplicates:
+                arrays.pop(key)
 
         frame = cls(
             numbers=arrays.pop("numbers"),
