@@ -91,7 +91,7 @@ class Frame:
     def from_atoms(cls, atoms: ase.Atoms):
         arrays = deepcopy(atoms.arrays)
         info = deepcopy(atoms.info)
-        
+
         duplicates = list(set(atoms.calc.results.keys() & atoms.arrays.keys()))
         for key in duplicates:
             arrays.pop(key)
