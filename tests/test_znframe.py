@@ -1,4 +1,6 @@
 from ase.build import molecule
+import ase.io
+from ase.calculators.singlepoint import SinglePointCalculator
 from znframe import Frame
 import pytest
 import numpy as np
@@ -16,6 +18,17 @@ def ammonia() -> Frame:
     ammonia.arrays["forces"] = np.random.random((4, 3))
     ammonia.info["energy"] = -1234
     return Frame.from_atoms(ammonia)
+
+
+@pytest.fixture
+def waterWithCalc() -> ase.Atoms:
+    atoms = molecule("H2O")
+    atoms.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
+    atoms.pbc = [True, True, True]
+    atoms.calc = SinglePointCalculator(
+        atoms, energy=-1234, forces=np.random.random((3, 3)), stress=np.random.random(6)
+    )
+    return atoms
 
 
 def test_frame_from_ase_molecule(ammonia):
@@ -44,6 +57,7 @@ def test_frame_to_dict(water):
         "connectivity": water.connectivity,
         "arrays": water.arrays,
         "info": water.info,
+        "calc": water.calc,
         "pbc": water.pbc,
         "cell": water.cell,
     }
@@ -55,3 +69,43 @@ def test_frame_from_dict(ammonia):
 
 def test_to_json(ammonia):
     assert Frame.from_json(ammonia.to_json()) == ammonia
+
+
+def test_water_with_calc(waterWithCalc):
+    assert "forces" in waterWithCalc.calc.results
+    assert "stress" in waterWithCalc.calc.results
+    assert "energy" in waterWithCalc.calc.results
+
+    assert "forces" not in waterWithCalc.info
+    assert "stress" not in waterWithCalc.arrays
+    assert "energy" not in waterWithCalc.arrays
+
+    assert "forces" not in waterWithCalc.arrays
+    assert "stress" not in waterWithCalc.info
+    assert "energy" not in waterWithCalc.info
+
+    frame = Frame.from_atoms(waterWithCalc)
+    intersection = set(frame.info) & set(frame.arrays)
+    if intersection:
+        raise ValueError(f"Duplicate keys: {intersection}")
+
+    assert "forces" not in frame.arrays
+    assert "stress" not in frame.arrays
+    assert "energy" not in frame.arrays
+
+    assert "stress" not in frame.info
+    assert "energy" not in frame.info
+    assert "forces" not in frame.info
+
+    assert "forces" in frame.calc
+    assert "stress" in frame.calc
+    assert "energy" in frame.calc
+
+    atoms = frame.to_atoms()
+    for key in atoms.calc.results.keys():
+        if isinstance(atoms.calc.results[key], np.ndarray):
+            np.testing.assert_array_equal(
+                atoms.calc.results[key], waterWithCalc.calc.results[key]
+            )
+        else:
+            assert atoms.calc.results[key] == waterWithCalc.calc.results[key]

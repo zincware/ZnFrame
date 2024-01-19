@@ -65,6 +65,11 @@ class Frame:
         converter=_list_to_array, eq=False, factory=dict
     )
 
+    # Do we need this, or can we just create calc in post_init?
+    calc: dict[str, t.Union[float, int, np.ndarray]] = field(
+        converter=_list_to_array, eq=False, factory=dict
+    )
+
     pbc: np.ndarray = field(
         converter=_list_to_array,
         eq=cmp_using(np.array_equal),
@@ -93,9 +98,17 @@ class Frame:
         info = deepcopy(atoms.info)
 
         if hasattr(atoms.calc, "results"):
-            duplicates = list(set(atoms.calc.results.keys()) & set(atoms.arrays.keys()))
-            for key in duplicates:
+            duplicates_arrays = list(
+                set(atoms.calc.results.keys()) & set(atoms.arrays.keys())
+            )
+            for key in duplicates_arrays:
                 arrays.pop(key)
+
+            duplicates_info = list(
+                set(atoms.calc.results.keys()) & set(atoms.info.keys())
+            )
+            for key in duplicates_info:
+                info.pop(key)
 
         frame = cls(
             numbers=arrays.pop("numbers"),
@@ -112,7 +125,7 @@ class Frame:
                 if isinstance(value, np.ndarray):
                     value = value.tolist()
                 calc_data[key] = value
-            frame.info["calc"] = calc_data
+            frame.calc = calc_data
         except AttributeError:
             pass
 
@@ -131,12 +144,11 @@ class Frame:
             cell=self.cell,
         )
 
-        if "calc" in self.info:
-            calc = self.info.pop("calc", None)
+        if self.calc:
             atoms.calc = SinglePointCalculator(atoms)
             atoms.calc.results = {
                 key: np.array(val) if isinstance(val, list) else val
-                for key, val in calc
+                for key, val in self.calc.items()
             }
 
         atoms.arrays.update(self.arrays)
