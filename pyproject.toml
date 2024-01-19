@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "znframe"
-version = "0.1.2"
+version = "0.1.3"
 description = "ZnFrame - ASE-like Interface based on dataclasses"
 authors = ["zincwarecode <zincwarecode@gmail.com>"]
 readme = "README.md"

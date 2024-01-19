@@ -1,4 +1,6 @@
 from ase.build import molecule
+import ase
+from ase.calculators.singlepoint import SinglePointCalculator
 from znframe import Frame
 import pytest
 import numpy as np
@@ -16,6 +18,13 @@ def ammonia() -> Frame:
     ammonia.arrays["forces"] = np.random.random((4, 3))
     ammonia.info["energy"] = -1234
     return Frame.from_atoms(ammonia)
+
+
+@pytest.fixture
+def waterWithCalc() -> ase.Atoms:
+    atoms = molecule("H2O")
+    atoms.calc = SinglePointCalculator(atoms, energy=-1234)
+    return atoms
 
 
 def test_frame_from_ase_molecule(ammonia):
@@ -55,3 +64,8 @@ def test_frame_from_dict(ammonia):
 
 def test_to_json(ammonia):
     assert Frame.from_json(ammonia.to_json()) == ammonia
+
+
+def test_water_with_calc(waterWithCalc):
+    frame = Frame.from_atoms(waterWithCalc)
+    assert frame.to_atoms().calc == waterWithCalc.calc
