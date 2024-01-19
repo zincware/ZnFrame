@@ -72,7 +72,7 @@ def test_to_json(ammonia):
 
 def test_water_with_calc(waterWithCalc):
     frame = Frame.from_atoms(waterWithCalc)
-    duplicates = list(set(frame.calc.results.keys()) & set(frame.arrays.keys()))
+    duplicates = list(set(frame.info.calc.keys()) & set(frame.arrays.keys()))
     if duplicates:
         raise ValueError(f"Duplicate keys: {duplicates}")
 
