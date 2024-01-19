@@ -75,6 +75,14 @@ def test_water_with_calc(waterWithCalc):
     duplicates = list(set(frame.info["calc"].keys()) & set(frame.arrays.keys()))
     if duplicates:
         raise ValueError(f"Duplicate keys: {duplicates}")
+    
+    assert "forces" in frame.arrays
+    assert "stress" in frame.info
+    assert "energy" in frame.info
+
+    assert "forces" not in frame.info
+    assert "stress" not in frame.arrays
+    assert "energy" not in frame.arrays
 
     atoms = frame.to_atoms()
     for key in atoms.calc.results.keys():
