@@ -71,6 +71,18 @@ def test_to_json(ammonia):
 
 
 def test_water_with_calc(waterWithCalc):
+    assert "forces" in waterWithCalc.calc.results
+    assert "stress" in waterWithCalc.calc.results
+    assert "energy" in waterWithCalc.calc.results
+
+    assert "forces" not in waterWithCalc.info
+    assert "stress" not in waterWithCalc.arrays
+    assert "energy" not in waterWithCalc.arrays
+
+    assert "forces" not in waterWithCalc.arrays
+    assert "stress" not in waterWithCalc.info
+    assert "energy" not in waterWithCalc.info
+
     frame = Frame.from_atoms(waterWithCalc)
     intersection = set(frame.info) & set(frame.arrays)
     if intersection:
