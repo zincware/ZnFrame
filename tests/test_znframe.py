@@ -88,13 +88,18 @@ def test_water_with_calc(waterWithCalc):
     if intersection:
         raise ValueError(f"Duplicate keys: {intersection}")
 
-    assert "forces" in frame.arrays
-    assert "stress" in frame.info
-    assert "energy" in frame.info
-
-    assert "forces" not in frame.info
+    assert "forces" not in frame.arrays
     assert "stress" not in frame.arrays
     assert "energy" not in frame.arrays
+
+    assert "stress" not in frame.info
+    assert "energy" not in frame.info
+    assert "forces" not in frame.info
+
+    assert "forces" in frame.calc
+    assert "stress" in frame.calc
+    assert "energy" in frame.calc
+
 
     atoms = frame.to_atoms()
     for key in atoms.calc.results.keys():
