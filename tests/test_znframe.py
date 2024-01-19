@@ -23,7 +23,9 @@ def ammonia() -> Frame:
 @pytest.fixture
 def waterWithCalc() -> ase.Atoms:
     atoms = molecule("H2O")
-    atoms.calc = SinglePointCalculator(atoms, energy=-1234, forces=np.random.random((3, 3)))
+    atoms.calc = SinglePointCalculator(
+        atoms, energy=-1234, forces=np.random.random((3, 3))
+    )
     return atoms
 
 
