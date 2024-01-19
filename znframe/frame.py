@@ -68,7 +68,7 @@ class Frame:
     # Do we need this, or can we just create calc in post_init?
     calc: dict[str, t.Union[float, int, np.ndarray]] = field(
         converter=_list_to_array, eq=False, factory=dict
-    ) 
+    )
 
     pbc: np.ndarray = field(
         converter=_list_to_array,
