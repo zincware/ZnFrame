@@ -1,5 +1,5 @@
 from ase.build import molecule
-import ase
+import ase.io
 from ase.calculators.singlepoint import SinglePointCalculator
 from znframe import Frame
 import pytest
@@ -23,8 +23,10 @@ def ammonia() -> Frame:
 @pytest.fixture
 def waterWithCalc() -> ase.Atoms:
     atoms = molecule("H2O")
+    atoms.cell = [[10, 0, 0], [0, 10, 0], [0, 0, 10]]
+    atoms.pbc = [True, True, True]
     atoms.calc = SinglePointCalculator(
-        atoms, energy=-1234, forces=np.random.random((3, 3))
+        atoms, energy=-1234, forces=np.random.random((3, 3)), stress=np.random.random(6)
     )
     return atoms
 
