@@ -100,7 +100,6 @@ def test_water_with_calc(waterWithCalc):
     assert "stress" in frame.calc
     assert "energy" in frame.calc
 
-
     atoms = frame.to_atoms()
     for key in atoms.calc.results.keys():
         if isinstance(atoms.calc.results[key], np.ndarray):
