@@ -75,10 +75,12 @@ def test_water_with_calc(waterWithCalc):
     duplicates = list(set(frame.calc.results.keys()) & set(frame.arrays.keys()))
     if duplicates:
         raise ValueError(f"Duplicate keys: {duplicates}")
-    
+
     atoms = frame.to_atoms()
     for key in atoms.calc.results.keys():
         if isinstance(atoms.calc.results[key], np.ndarray):
-            np.testing.assert_array_equal(atoms.calc.results[key], waterWithCalc.calc.results[key])
+            np.testing.assert_array_equal(
+                atoms.calc.results[key], waterWithCalc.calc.results[key]
+            )
         else:
-            assert atoms.calc.results[key] == waterWithCalc.calc.results[key]  
+            assert atoms.calc.results[key] == waterWithCalc.calc.results[key]
