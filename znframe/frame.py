@@ -137,7 +137,7 @@ class Frame:
             atoms.calc.results = {
                 key: np.array(val) if isinstance(val, list) else val
                 for key, val in calc.items()
-            }    
+            }
 
         atoms.arrays.update(self.arrays)
         atoms.info.update(self.info)
