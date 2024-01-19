@@ -98,9 +98,13 @@ class Frame:
         info = deepcopy(atoms.info)
 
         if hasattr(atoms.calc, "results"):
-            duplicates = list(set(atoms.calc.results.keys()) & set(atoms.arrays.keys()))
-            for key in duplicates:
+            duplicates_arrays = list(set(atoms.calc.results.keys()) & set(atoms.arrays.keys()))
+            for key in duplicates_arrays:
                 arrays.pop(key)
+
+            duplicates_info = list(set(atoms.calc.results.keys()) & set(atoms.info.keys()))
+            for key in duplicates_info:
+                info.pop(key)
 
         frame = cls(
             numbers=arrays.pop("numbers"),
