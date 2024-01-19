@@ -87,7 +87,7 @@ def test_water_with_calc(waterWithCalc):
     intersection = set(frame.info) & set(frame.arrays)
     if intersection:
         raise ValueError(f"Duplicate keys: {intersection}")
-    
+
     assert "forces" in frame.arrays
     assert "stress" in frame.info
     assert "energy" in frame.info
