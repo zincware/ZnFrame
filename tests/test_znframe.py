@@ -75,7 +75,7 @@ def test_water_with_calc(waterWithCalc):
     duplicates = list(set(frame.info["calc"].keys()) & set(frame.arrays.keys()))
     if duplicates:
         raise ValueError(f"Duplicate keys: {duplicates}")
-    
+
     assert "forces" in frame.arrays
     assert "stress" in frame.info
     assert "energy" in frame.info
