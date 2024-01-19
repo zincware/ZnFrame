@@ -57,7 +57,7 @@ def test_frame_to_dict(water):
         "connectivity": water.connectivity,
         "arrays": water.arrays,
         "info": water.info,
-        "calc": water.calc.results,
+        "calc": water.calc,
         "pbc": water.pbc,
         "cell": water.cell,
     }
