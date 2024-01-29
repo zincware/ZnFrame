@@ -10,6 +10,7 @@ import typing as t
 import enum
 
 from znframe.bonds import ASEComputeBonds
+from znframe.vec import LatticeVecField, OriginVecField
 
 
 class ComputeProperties(enum.Enum):
@@ -54,6 +55,13 @@ def _npnumber_to_number(number):
     return number
 
 
+def _vec_to_dict(vec) -> dict:
+    if isinstance(vec, LatticeVecField) or isinstance(vec, OriginVecField):
+        vec = vec.to_dict()
+    vec = _ndarray_to_list(vec)
+    return vec
+
+
 @define
 class Frame:
     numbers: np.ndarray = field(converter=_list_to_array, eq=cmp_using(np.array_equal))
@@ -72,9 +80,12 @@ class Frame:
         converter=_list_to_array, eq=False, factory=dict
     )
 
-    # Do we need this, or can we just create calc in post_init?
     calc: dict[str, t.Union[float, int, np.ndarray]] = field(
         converter=_list_to_array, eq=False, factory=dict
+    )
+
+    vector_field: t.Union[OriginVecField, LatticeVecField] = field(
+        converter=_vec_to_dict, eq=False, factory=dict
     )
 
     pbc: np.ndarray = field(
