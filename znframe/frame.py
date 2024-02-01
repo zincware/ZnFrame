@@ -183,25 +183,27 @@ class Frame:
 
         return atoms
 
-    def to_dict(self, built_in_types: bool = True) -> dict:
+    def to_dict(self, built_in_types: bool = True, json_serializable=False) -> dict:
         data = attrs.asdict(self, filter=lambda attr, _: attr.name != "recompute")
-        if built_in_types:
-            return data
-        else:
+        if not built_in_types:
             data = _ndarray_to_list(data)
             for key, value in data["info"].items():
                 if isinstance(value, np.generic):
                     data["info"][key] = _npnumber_to_number(value)
                 else:
                     data["info"][key] = value
-            return data
+
+        if json_serializable:
+            data = default_serializer(data)
+
+        return data
 
     @classmethod
     def from_dict(cls, d: dict):
         return cls(**d)
 
     def to_json(self) -> str:
-        data = self.to_dict(built_in_types=False)
+        data = self.to_dict(built_in_types=False, json_serializable=True)
         return json.dumps(data)
 
     @classmethod
@@ -216,3 +218,16 @@ def rgb2hex(value):
 
 def get_radius(value):
     return (0.25 * (2 - np.exp(-0.2 * value)),)
+
+
+def default_serializer(obj):
+    for key, value in list(obj.items()):
+        if (
+            not isinstance(value, (int, float, str, list, dict, bool))
+            and value is not None
+        ):
+            print("Warning: {} is not JSON serializable".format(type(value)))
+            del obj[key]
+        elif isinstance(value, dict):
+            obj[key] = default_serializer(value)
+    return obj
