@@ -183,7 +183,7 @@ class Frame:
 
         return atoms
 
-    def to_dict(self, built_in_types: bool = True, json_serializable = False) -> dict:
+    def to_dict(self, built_in_types: bool = True, json_serializable=False) -> dict:
         data = attrs.asdict(self, filter=lambda attr, _: attr.name != "recompute")
         if not built_in_types:
             data = _ndarray_to_list(data)
@@ -222,7 +222,10 @@ def get_radius(value):
 
 def default_serializer(obj):
     for key, value in list(obj.items()):
-        if not isinstance(value, (int, float, str, list, dict, bool)) and value is not None:
+        if (
+            not isinstance(value, (int, float, str, list, dict, bool))
+            and value is not None
+        ):
             print("Warning: {} is not JSON serializable".format(type(value)))
             del obj[key]
         elif isinstance(value, dict):
